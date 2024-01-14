@@ -6,3 +6,9 @@ it works by injecting code into the discord client and appending an javascript f
 
 ## How to use it
 follow this [tutorial](https://gist.github.com/vanyle/edbdd0c28a0150af3b905b99a4c48f00) and use the inject.js file from this repo
+
+## Another way of how to use it (i am expecting that you are familiar with the first method)
+1. unpack the core.asar file
+2. download the mainScreen.js and inject.js file from this repo
+3. drag both files into the app folder of the extracted archieve
+4. repack the archieve and done!
